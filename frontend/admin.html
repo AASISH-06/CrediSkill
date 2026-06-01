@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrediSkill - Admin Control</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- 3D Libraries & GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="animations.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body class="admin-body">
+
+<!-- Optional Canvas for 3D Background effect (matching theme) -->
+<canvas id="bg-main"></canvas>
+
+<header>
+    <nav>
+            <a href="index.html" class="logo">CrediSkill<span style="color:#00ffcc"> Admin</span></a>
+        <ul class="nav-links">
+            <li><a href="#" id="adminLogoutBtn" style="display:none;" onclick="logoutAdmin()">Exit Portal</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <!-- Admin Login Overlay -->
+    <div id="admin-login-overlay" style="display:flex; justify-content:center; align-items:center; min-height: 80vh;">
+        <div class="command-center-box" style="width: 500px; padding: 40px; border-radius: 20px; background: rgba(255,255,255,0.05); backdrop-filter: blur(25px); border: 2px solid rgba(0, 255, 204, 0.4); box-shadow: 0 0 30px rgba(0, 255, 204, 0.2), inset 0 0 20px rgba(0,255,204,0.1); text-align: center; position: relative; overflow: hidden;">
+            <div class="lock-icon" style="font-size: 3rem; margin-bottom: 10px; animation: glowPulse 2s infinite alternate;">🔐</div>
+            <h2 style="color: var(--text-main); font-size: 1.8rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;">CrediSkill Admin Access</h2>
+            <p style="color: var(--secondary); margin-bottom: 30px; font-weight: 500; font-size: 1.1rem; text-shadow: 0 0 10px rgba(0,255,204,0.5);">Secure Gateway - Restricted Access</p>
+            
+            <form id="adminLoginForm" style="display: flex; flex-direction: column; gap: 1rem;">
+                <input type="email" id="adminEmail" placeholder="Admin Email" class="gateway-input" required>
+                <input type="password" id="adminPassword" placeholder="Password" class="gateway-input" required>
+                <input type="password" id="adminSecretKey" placeholder="Secret Key" class="gateway-input" required>
+                <button type="submit" class="gateway-btn" style="margin-top: 10px;">Authenticate</button>
+            </form>
+            
+            <p style="margin-top: 30px; font-size: 0.85rem; color: #EF4444; letter-spacing: 1.5px;text-transform: uppercase;">&#9888; Restricted Access &mdash; Admin Only</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.getElementById('admin-login-overlay')) {
+                gsap.fromTo(".command-center-box", 
+                    { y: -100, opacity: 0, scale: 0.9 }, 
+                    { y: 0, opacity: 1, scale: 1, duration: 1.5, ease: "elastic.out(1, 0.5)", delay: 0.2 }
+                );
+            }
+        });
+    </script>
+
+    <!-- Admin Dashboard (Hidden by default) -->
+    <div id="admin-dashboard" style="display: none; padding: 20px;">
+        
+        <!-- Top Stats Row -->
+        <div class="admin-stats-container">
+            <div class="stat-card glass-panel glow-hover">
+                <h3>Total Users</h3>
+                <h2 id="stat-users">Loading...</h2>
+            </div>
+            <div class="stat-card glass-panel glow-hover">
+                <h3>Clients</h3>
+                <h2 id="stat-clients">Loading...</h2>
+            </div>
+            <div class="stat-card glass-panel glow-hover">
+                <h3>Freelancers</h3>
+                <h2 id="stat-freelancers">Loading...</h2>
+            </div>
+            <div class="stat-card glass-panel glow-hover">
+                <h3>Total Orders</h3>
+                <h2 id="stat-orders">Loading...</h2>
+            </div>
+            <div class="stat-card glass-panel glow-hover">
+                <h3>Active Jobs</h3>
+                <h2 id="stat-jobs">Loading...</h2>
+            </div>
+            <div class="stat-card glass-panel glow-hover highlight-card">
+                <h3>Platform Health</h3>
+                <h2 id="stat-health" style="color: #00ffcc;">Loading...</h2>
+            </div>
+        </div>
+
+        <!-- Export Actions Row -->
+        <div class="admin-exports glass-panel section-container">
+            <h3>Export Data (CSV / Excel)</h3>
+            <div class="export-buttons">
+                <button class="btn" onclick="exportAdminData('users')">Export All Users</button>
+                <button class="btn" onclick="exportAdminData('clients')">Export Clients</button>
+                <button class="btn" onclick="exportAdminData('freelancers')">Export Freelancers</button>
+                <button class="btn" onclick="exportAdminData('orders')">Export Orders</button>
+            </div>
+        </div>
+
+        <!-- Analytics Charts -->
+        <div class="admin-charts-grid">
+            <div class="chart-container glass-panel">
+                <h3>User Growth</h3>
+                <canvas id="userGrowthChart"></canvas>
+            </div>
+            <div class="chart-container glass-panel">
+                <h3>Freelancer Progress</h3>
+                <canvas id="freelancerProgressChart"></canvas>
+            </div>
+            <div class="chart-container glass-panel">
+                <h3>Platform Activity</h3>
+                <canvas id="platformActivityChart"></canvas>
+            </div>
+            <div class="chart-container glass-panel top-performers-list">
+                <h3>Top Performers</h3>
+                <ul id="topPerformersList"></ul>
+            </div>
+        </div>
+
+        <!-- Main User Monitoring & Controls -->
+        <div class="admin-user-monitoring glass-panel section-container">
+            <h3>User Monitoring Panel</h3>
+            <div class="filter-controls">
+                <input type="text" id="adminSearchUser" placeholder="Search by name, email, or ID..." onkeyup="filterAdminUsers()">
+                <select id="adminRoleFilter" onchange="filterAdminUsers()">
+                    <option value="ALL">All Roles</option>
+                    <option value="CLIENT">Clients</option>
+                    <option value="FREELANCER">Freelancers</option>
+                </select>
+            </div>
+            <div class="table-container">
+                <table id="adminUsersTable">
+                    <thead>
+                        <tr>
+                            <th>CSK ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Verified</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminUsersBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Side-by-Side: Announcements and Logs -->
+        <div class="admin-bottom-grid">
+            <div class="announcement-panel glass-panel section-container">
+                <h3>Global Announcement System</h3>
+                <form id="announcementForm">
+                    <textarea id="announcementMessage" placeholder="Type message to broadcast to all users..." required></textarea>
+                    <button type="submit" class="btn">Broadcast Announcement</button>
+                </form>
+            </div>
+
+            <div class="activity-timeline glass-panel section-container">
+                <h3>Platform Activity Log</h3>
+                <div class="timeline-container" id="adminTimeline">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- User Details Modal (Hidden) -->
+<div id="adminUserModal" class="modal glass-panel" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeAdminModal()">&times;</span>
+        <h2 id="modalUserName">User Name</h2>
+        <p><strong>CSK ID:</strong> <span id="modalUserId"></span></p>
+        <p><strong>Email:</strong> <span id="modalUserEmail"></span></p>
+        <p><strong>Role:</strong> <span id="modalUserRole"></span></p>
+        <div class="modal-actions" style="margin-top:20px;">
+            <button class="btn btn-warning" id="modalSuspendBtn" onclick="toggleUserSuspend()">Suspend User</button>
+            <button class="btn btn-action" onclick="verifyUser('verify_email')">Verify Email</button>
+            <button class="btn btn-action" onclick="verifyUser('verify_phone')">Verify Phone</button>
+            <button class="btn btn-action" onclick="verifyUser('verify_id')">Verify ID</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Inline specific overrides for admin page if needed, mostly moved to style.css */
+.admin-body { overflow-y: auto; }
+</style>
+</body>
+</html>

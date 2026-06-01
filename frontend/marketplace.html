@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace - CrediSkill</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 3D Libraries & GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="models/avatar-data.js"></script>
+    <script src="animations.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <canvas id="bg-main"></canvas>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">CrediSkill</a>
+            <ul class="nav-links" id="auth-links"></ul>
+        </nav>
+    </header>
+    
+    <main>
+        <h2>Freelance Exchange</h2>
+        <p class="text-muted">Discover verified talent or find active jobs purely based on credibility.</p>
+
+        <!-- Tabs -->
+        <div class="tabs" style="display: flex; gap: 1rem; margin: 2rem 0;">
+            <button id="tabSkills" class="btn" onclick="switchMarketplaceTab('skills')">Skill Marketplace</button>
+            <button id="tabJobs" class="btn btn-secondary" onclick="switchMarketplaceTab('jobs')">Job Bidding Board</button>
+        </div>
+
+        <!-- Filters (For Skills) -->
+        <div id="skillsFilters" style="display: flex; gap: 1rem; margin-bottom: 2rem; background: var(--bg-card); padding: 1rem; border-radius: 8px;">
+            <input type="text" id="searchInput" placeholder="Search..." style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-dark); color: white; flex-grow: 1;">
+            <select id="categoryFilter" style="padding: 0.5rem; border-radius: 4px; background: var(--bg-dark); color: white; border: 1px solid var(--border-color);">
+                <option value="">All Categories</option>
+                <option value="tech">Tech</option>
+                <option value="design">Design</option>
+            </select>
+            <select id="ratingFilter" style="padding: 0.5rem; border-radius: 4px; background: var(--bg-dark); color: white; border: 1px solid var(--border-color);">
+                <option value="">Any Rating</option>
+                <option value="4">4.0 & Up</option>
+            </select>
+            <select id="priceFilter" style="padding: 0.5rem; border-radius: 4px; background: var(--bg-dark); color: white; border: 1px solid var(--border-color);">
+                <option value="">Any Price/Value</option>
+                <option value="low">Under $50</option>
+                <option value="high">$50 & Up</option>
+            </select>
+            <button onclick="applyFilters()" class="btn">Filter</button>
+        </div>
+
+        <div id="skillGrid" class="skill-grid">
+            <!-- Loaded via JS -->
+        </div>
+
+        <div id="jobGrid" class="skill-grid" style="display: none;">
+            <!-- Loaded via JS -->
+        </div>
+    </main>
+</body>
+</html>

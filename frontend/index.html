@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrediSkill - 3D Marketplace</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- 3D Libraries & GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script src="models/avatar-data.js"></script>
+    <script src="animations.js" defer></script>
+    <script src="script.js" defer></script>
+</head>>
+
+<body>
+
+<!-- 3D Intro -->
+<div id="intro-loader">
+    <canvas id="bg-intro"></canvas>
+    <h1 class="logo-text">CrediSkill</h1>
+    <h2 class="intro-tagline" style="opacity: 0; color: var(--text-main); font-weight: 300; letter-spacing: 4px; font-size: 1.2rem; margin-top: 15px;">Trust Your Skills. Prove Your Worth.</h2>
+</div>
+
+<header>
+    <nav>
+        <a href="index.html" class="logo">CrediSkill</a>
+        <ul class="nav-links" id="auth-links"></ul>
+    </nav>
+</header>
+
+<main>
+    <canvas id="bg-main"></canvas>
+
+    <div class="hero glass-panel">
+        <h1>Trust Your Skills. Prove Your Worth.</h1>
+        <p>Proof-based global skill marketplace powered entirely by your credibility.</p>
+        <a href="register.html" class="btn">Get Started</a>
+    </div>
+
+    <!-- Side Animated Element Container -->
+    <div id="side-bot" style="position: fixed; right: 5%; top: 20%; width: 200px; height: 300px; pointer-events: none; z-index: 50;">
+        <canvas id="bot-canvas"></canvas>
+    </div>
+</main>
+
+    <!-- Secret Admin Trigger Gateway (Global Avatar) -->
+    <div id="secret-admin-avatar" title="Freelancer System Agent">
+        <div id="avatar3D" style="width: 100%; height: 100%;"></div>
+    </div>
+</body>
+</html>
